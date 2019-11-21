@@ -11,6 +11,7 @@
 <body>
 <div class = "container">
 <h1>Password Management System</h1>
+<p> ${message} </p>
 <p>
 <button class = "btn btn-primary" onclick="window.location.href = 'views/users-form.jsp'">Add User</button>
 </p>

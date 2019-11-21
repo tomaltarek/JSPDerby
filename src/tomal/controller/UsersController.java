@@ -18,6 +18,7 @@ import tomal.entity.Users;
 public class UsersController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
+	RequestDispatcher dispatcher = null;
 	//create a ref variable for UsersDAO
 	UsersDAO usersDAO=null; 
 	
@@ -27,17 +28,31 @@ public class UsersController extends HttpServlet {
 	}
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// call DAO method to get list of users 
-		List<Users> list=usersDAO.get();
+String action = request.getParameter("action");
 		
-		// add the users to request 
-		request.setAttribute("list", list);
+		if(action == null) {
+			action = "LIST";
+		}
 		
-		// get the request dispatcher 
-		RequestDispatcher dispatcher=request.getRequestDispatcher("/views/users-list.jsp");
-		
-		//forward req and res object 
-		dispatcher.forward(request, response);
+		switch(action) {
+			
+			case "LIST":
+				listUsers(request, response);
+				break;
+				
+//			case "EDIT":
+//				getSingleEmployee(request, response);
+//				break;
+//				
+//			case "DELETE":
+//				deleteEmployee(request, response);
+//				break;
+//				
+			default:
+				listUsers(request, response);
+				break;
+				
+		}
 	}
 
 	
@@ -47,13 +62,25 @@ public class UsersController extends HttpServlet {
 		Users e= new Users();
 		e.setName(name);
 		e.setPass(password);
-		usersDAO.save(e);
-		/*if (usersDAO.save(e)) {
+		//usersDAO.save(e);
+		if (usersDAO.save(e)) {
 			
 			request.setAttribute("message", "Saved Successfully");
-		}*/
+		}
 		
+		listUsers(request, response);
 		
+	}
+	
+private void listUsers(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		List<Users> theList = usersDAO.get();
+		
+		request.setAttribute("list", theList);
+		
+		dispatcher = request.getRequestDispatcher("/views/users-list.jsp");
+		
+		dispatcher.forward(request, response);
 	}
 
 }
