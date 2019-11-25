@@ -17,12 +17,12 @@ import tomal.entity.Users;
  */
 public class UsersController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
+      
 	RequestDispatcher dispatcher = null;
-	String old_name=null; 
+	String old_name=null; //for updating 
 	//create a ref variable for UsersDAO
 	UsersDAO usersDAO=null; 
-	boolean decision=true;
+	boolean decision=true; //whether updating or creating new record 
 
 	
 	
@@ -48,11 +48,11 @@ public class UsersController extends HttpServlet {
 			case "EDIT":
 				getSingleUser(request, response);
 				break;
-//				
-//			case "DELETE":
-//				deleteEmployee(request, response);
-//				break;
-//				
+				
+			case "DELETES":
+				deleteUser(request, response);
+				break;
+				
 			default:
 				listUsers(request, response);
 				break;
@@ -117,6 +117,15 @@ private void getSingleUser(HttpServletRequest request, HttpServletResponse respo
 	dispatcher = request.getRequestDispatcher("/views/users-form.jsp");
 	
 	dispatcher.forward(request, response);
+}
+
+private void deleteUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+	
+	String uname = request.getParameter("id");	
+	if(usersDAO.delete(uname)) {
+		request.setAttribute("message", "Deleted Successfully");
+	}
+	listUsers(request, response);
 }
 
 }

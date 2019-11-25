@@ -107,6 +107,20 @@ public class UsersDAOImpl implements UsersDAO {
 		}
 		return flag;
 	}
+	@Override
+	public boolean delete(String s) {
+		boolean flag = false;
+		try {
+			String sql = "delete from users where username='" +s+"'";
+			connection = DBConnectionUtil.openConnection();
+			preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.executeUpdate();
+			flag = true;
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return flag;
+	}
 	
-
 }
+	

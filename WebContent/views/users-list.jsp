@@ -27,6 +27,8 @@
    <td>${usr.pass}</td>
     <td>
     <a href="${pageContext.request.contextPath}/UsersController?action=EDIT&id=${usr.name}">Edit</a>
+    |
+     <a href="${pageContext.request.contextPath}/UsersController?action=DELETES&id=${usr.name}">Delete</a>
     </td>
    </tr>
   
