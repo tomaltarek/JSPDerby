@@ -17,9 +17,14 @@ import tomal.entity.Users;
  */
 public class UsersController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
+      
+	RequestDispatcher dispatcher = null;
+	String old_name=null; //for updating 
 	//create a ref variable for UsersDAO
 	UsersDAO usersDAO=null; 
+	boolean decision=true; //whether updating or creating new record 
+
+	
 	
 	//create constructor and initialize Users DAO 
    public UsersController() {
@@ -27,33 +32,100 @@ public class UsersController extends HttpServlet {
 	}
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// call DAO method to get list of users 
-		List<Users> list=usersDAO.get();
 		
-		// add the users to request 
-		request.setAttribute("list", list);
+		String action = request.getParameter("action");
+       
+		if(action == null) {
+			action = "LIST";
+		}
 		
-		// get the request dispatcher 
-		RequestDispatcher dispatcher=request.getRequestDispatcher("/views/users-list.jsp");
-		
-		//forward req and res object 
-		dispatcher.forward(request, response);
+		switch(action) {
+			
+			case "LIST":
+				listUsers(request, response);
+				break;
+				
+			case "EDIT":
+				getSingleUser(request, response);
+				break;
+				
+			case "DELETES":
+				deleteUser(request, response);
+				break;
+				
+			default:
+				listUsers(request, response);
+				break;
+				
+		}
 	}
 
 	
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {		
+	
 		String name=request.getParameter("uname");
 		String password=request.getParameter("password");
 		Users e= new Users();
 		e.setName(name);
 		e.setPass(password);
-		usersDAO.save(e);
-		/*if (usersDAO.save(e)) {
-			
-			request.setAttribute("message", "Saved Successfully");
-		}*/
+		//usersDAO.save(e);
 		
+//		 if (usersDAO.save(e)) {
+//	 			
+// 			request.setAttribute("message", "Saved Successfully");
+//	 	}
+		
+		 
+    if(decision==true) {
+			
+			if(usersDAO.save(e)) {
+				request.setAttribute("message", "Saved Successfully");
+			}
+		
+		}else {
+			
+			
+			if(usersDAO.update(e,old_name)) {
+				request.setAttribute("message", "Update Successfully");
+			}
+			
+		}
+	
+ 	listUsers(request, response);
+		decision=true;
 		
 	}
+	
+private void listUsers(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		List<Users> theList = usersDAO.get();
+		
+		request.setAttribute("list", theList);
+		
+		dispatcher = request.getRequestDispatcher("/views/users-list.jsp");
+		
+		dispatcher.forward(request, response);
+	}
+
+private void getSingleUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+	decision=false;
+	String uname = request.getParameter("id");	
+	Users theUser = usersDAO.get(uname);
+	old_name=theUser.getName();
+	request.setAttribute("user", theUser);
+
+	dispatcher = request.getRequestDispatcher("/views/users-form.jsp");
+	
+	dispatcher.forward(request, response);
+}
+
+private void deleteUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+	
+	String uname = request.getParameter("id");	
+	if(usersDAO.delete(uname)) {
+		request.setAttribute("message", "Deleted Successfully");
+	}
+	listUsers(request, response);
+}
 
 }

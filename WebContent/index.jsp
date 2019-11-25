@@ -1,0 +1,1 @@
+<% response.sendRedirect("UsersController?action=LIST"); %>

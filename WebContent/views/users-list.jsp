@@ -11,23 +11,32 @@
 <body>
 <div class = "container">
 <h1>Password Management System</h1>
+<p> ${message} </p>
 <p>
-<button class = "btn btn-primary" onclick="window.location.href = 'views/users-form.jsp'">Add User</button>
+<button class = "btn btn-primary"  onclick="window.location.href = 'views/users-form.jsp'" >Add User</button>
 </p>
 <table class = "table table-striped table-bordered">
   <tr class = "thead-dark">
     <th>User Name </th>
     <th>Password </th>
+    <th>Action </th>
   </tr>
   <c:forEach items="${list}" var="usr">
    <tr class="thead-dark"> 
    <td>${usr.name}</td>
    <td>${usr.pass}</td>
+    <td>
+    <a href="${pageContext.request.contextPath}/UsersController?action=EDIT&id=${usr.name}">Edit</a>
+    |
+     <a href="${pageContext.request.contextPath}/UsersController?action=DELETES&id=${usr.name}">Delete</a>
+    </td>
    </tr>
   
   </c:forEach>
 
 </table>
 </div>
+
+ 
 </body>
 </html>
