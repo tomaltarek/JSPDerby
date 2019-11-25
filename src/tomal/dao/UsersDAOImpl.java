@@ -73,5 +73,40 @@ public class UsersDAOImpl implements UsersDAO {
 		}
 		return flag;
 	}
+	@Override
+	public Users get(String u) {
+		Users user = null;
+		try {
+			user = new Users();
+			String sql = "SELECT * FROM users where username="+"'"+u+"'";
+			connection = DBConnectionUtil.openConnection();
+			statement = connection.createStatement();
+			resultSet = statement.executeQuery(sql);
+			if(resultSet.next()) {
+				user.setName(resultSet.getString("username"));			
+				user.setPass(resultSet.getString("password"));
+			}
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return user;
+	}
+	@Override
+	public boolean update(Users u,String s) {
+		boolean flag = false;
+		try {
+			String sql = "UPDATE users SET username = '"+u.getName()+"', "
+					+ "password = '"+u.getPass()+"' where username='" +s+"'";
+			connection = DBConnectionUtil.openConnection();
+			preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.executeUpdate();
+			flag = true;
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return flag;
+	}
+	
 
 }

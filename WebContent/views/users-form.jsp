@@ -12,8 +12,8 @@
 
 
 <form action="${pageContext.request.contextPath}/UsersController" method="POST">
-Name <input type="text" name="uname"/><br>
-Password <input type="text" name="password"/><br>
+Name <input type="text" name="uname" value="${user.name}"/><br>
+Password <input type="text" name="password"  value="${user.pass}"/><br>
 <button class = "btn btn-primary" type="submit">Save</button>
 </form>
 

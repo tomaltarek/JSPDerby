@@ -19,8 +19,12 @@ public class UsersController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
 	RequestDispatcher dispatcher = null;
+	String old_name=null; 
 	//create a ref variable for UsersDAO
 	UsersDAO usersDAO=null; 
+	boolean decision=true;
+
+	
 	
 	//create constructor and initialize Users DAO 
    public UsersController() {
@@ -28,8 +32,9 @@ public class UsersController extends HttpServlet {
 	}
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-String action = request.getParameter("action");
 		
+		String action = request.getParameter("action");
+       
 		if(action == null) {
 			action = "LIST";
 		}
@@ -40,9 +45,9 @@ String action = request.getParameter("action");
 				listUsers(request, response);
 				break;
 				
-//			case "EDIT":
-//				getSingleEmployee(request, response);
-//				break;
+			case "EDIT":
+				getSingleUser(request, response);
+				break;
 //				
 //			case "DELETE":
 //				deleteEmployee(request, response);
@@ -56,19 +61,38 @@ String action = request.getParameter("action");
 	}
 
 	
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {		
+	
 		String name=request.getParameter("uname");
 		String password=request.getParameter("password");
 		Users e= new Users();
 		e.setName(name);
 		e.setPass(password);
 		//usersDAO.save(e);
-		if (usersDAO.save(e)) {
-			
-			request.setAttribute("message", "Saved Successfully");
-		}
 		
-		listUsers(request, response);
+//		 if (usersDAO.save(e)) {
+//	 			
+// 			request.setAttribute("message", "Saved Successfully");
+//	 	}
+		
+		 
+    if(decision==true) {
+			
+			if(usersDAO.save(e)) {
+				request.setAttribute("message", "Saved Successfully");
+			}
+		
+		}else {
+			
+			
+			if(usersDAO.update(e,old_name)) {
+				request.setAttribute("message", "Update Successfully");
+			}
+			
+		}
+	
+ 	listUsers(request, response);
+		decision=true;
 		
 	}
 	
@@ -82,5 +106,17 @@ private void listUsers(HttpServletRequest request, HttpServletResponse response)
 		
 		dispatcher.forward(request, response);
 	}
+
+private void getSingleUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+	decision=false;
+	String uname = request.getParameter("id");	
+	Users theUser = usersDAO.get(uname);
+	old_name=theUser.getName();
+	request.setAttribute("user", theUser);
+
+	dispatcher = request.getRequestDispatcher("/views/users-form.jsp");
+	
+	dispatcher.forward(request, response);
+}
 
 }

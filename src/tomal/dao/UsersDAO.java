@@ -11,4 +11,7 @@ public interface UsersDAO {
 List<Users> get();
 
 boolean save(Users e);
+boolean update(Users u, String s);
+
+Users get(String u);
 }
